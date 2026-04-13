@@ -148,7 +148,7 @@ function App() {
                 height: outHeight
             })
 
-            doc.save(`license_plate_${region}_${number.replace(/\s/g, '_')}.pdf`)
+            doc.save(`avtoraqam_${region}_${number.replace(/\s/g, '_')}_${outWidth}x${outHeight}mm.pdf`)
         } catch (error) {
             console.error('Download error:', error)
             alert('Xatolik yuz berdi: ' + error.message)
