@@ -53,8 +53,15 @@ function App() {
         try {
             const { euro: euroFont, arial: arialBoldFont } = fonts
 
+            // Use fallback dimensions if zero, negative, or blank
+            const outWidth = plateWidth > 0 ? plateWidth : 520
+            const outHeight = plateHeight > 0 ? plateHeight : 112
+
             // Clone SVG so we don't modify the live preview
             const svgClone = svgRef.current.cloneNode(true)
+            
+            // Force the exported SVG to stretch and fill the custom dimensions perfectly
+            svgClone.setAttribute('preserveAspectRatio', 'none')
 
             // Convert every <text> element to a <path> element
             const textElements = Array.from(svgClone.querySelectorAll('text'))
@@ -123,15 +130,15 @@ function App() {
             const doc = new jsPDF({
                 orientation: 'landscape',
                 unit: 'mm',
-                format: [plateWidth, plateHeight]
+                format: [outWidth, outHeight]
             })
 
             // Fix: usage of svg2pdf.js v2
             await svg2pdf(svgClone, doc, {
                 x: 0,
                 y: 0,
-                width: plateWidth,
-                height: plateHeight
+                width: outWidth,
+                height: outHeight
             })
 
             doc.save(`license_plate_${region}_${number.replace(/\s/g, '_')}.pdf`)
@@ -196,18 +203,20 @@ function App() {
                                     <label className="text-sm font-medium text-gray-700 ml-1">Kenglik (mm)</label>
                                     <input
                                         type="number"
-                                        value={plateWidth}
+                                        value={plateWidth || ''}
                                         onChange={(e) => setPlateWidth(Number(e.target.value))}
                                         className="w-full h-14 px-4 bg-[#F1F3F4] rounded-2xl border-none focus:ring-2 focus:ring-google-blue outline-none text-lg transition-all"
+                                        placeholder="520"
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700 ml-1">Balandlik (mm)</label>
                                     <input
                                         type="number"
-                                        value={plateHeight}
+                                        value={plateHeight || ''}
                                         onChange={(e) => setPlateHeight(Number(e.target.value))}
                                         className="w-full h-14 px-4 bg-[#F1F3F4] rounded-2xl border-none focus:ring-2 focus:ring-google-blue outline-none text-lg transition-all"
+                                        placeholder="112"
                                     />
                                 </div>
                             </div>
