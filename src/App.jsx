@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { Download, ChevronRight, Info, ShieldCheck, Loader2 } from 'lucide-react'
+import { Download, ChevronRight, Info, ShieldCheck, Loader2, Link, Unlink } from 'lucide-react'
 import { jsPDF } from 'jspdf'
 import * as opentype from 'opentype.js'
 import { svg2pdf } from 'svg2pdf.js'
@@ -9,6 +9,7 @@ function App() {
     const [number, setNumber] = useState('O 000 OO')
     const [plateWidth, setPlateWidth] = useState(520)
     const [plateHeight, setPlateHeight] = useState(112)
+    const [isProportionLocked, setIsProportionLocked] = useState(false)
     const [isDownloading, setIsDownloading] = useState(false)
     const [fonts, setFonts] = useState(null)
     const svgRef = useRef(null)
@@ -159,18 +160,18 @@ function App() {
     const outW = plateWidth > 0 ? plateWidth : 520;
     const outH = plateHeight > 0 ? plateHeight : 112;
 
-    const strokeW = outH * 0.045; 
-    const regionWidth = outH * 0.87; 
-    const dividerX = strokeW + regionWidth; 
-    const dividerW = outH * 0.045; 
-    
-    const regionFontSize = outH * 0.63; 
-    const mainFontSize = outH * 0.785;  
-    const uzFontSize = outH * 0.232;    
+    const strokeW = outH * 0.045;
+    const regionWidth = outH * 0.87;
+    const dividerX = strokeW + regionWidth;
+    const dividerW = outH * 0.045;
+
+    const regionFontSize = outH * 0.63;
+    const mainFontSize = outH * 0.785;
+    const uzFontSize = outH * 0.232;
 
     const regionX = strokeW + (regionWidth / 2);
     const mainX = dividerX + dividerW + ((outW - (dividerX + dividerW) - (outH * 0.52)) / 2);
-    
+
     const flagScale = outH / 11200;
     const flagX = outW - (outH * 0.52);
     const flagY = outH * 0.208;
@@ -225,23 +226,42 @@ function App() {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-end">
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700 ml-1">Kenglik (mm)</label>
                                     <input
                                         type="number"
                                         value={plateWidth || ''}
-                                        onChange={(e) => setPlateWidth(Number(e.target.value))}
+                                        onChange={(e) => {
+                                            const val = Number(e.target.value);
+                                            setPlateWidth(val);
+                                            if (isProportionLocked && val > 0) {
+                                                setPlateHeight(Math.round(val / (520 / 112)));
+                                            }
+                                        }}
                                         className="w-full h-14 px-4 bg-[#F1F3F4] rounded-2xl border-none focus:ring-2 focus:ring-google-blue outline-none text-lg transition-all"
                                         placeholder="520"
                                     />
                                 </div>
+                                <button
+                                    onClick={() => setIsProportionLocked(!isProportionLocked)}
+                                    className={`h-14 w-14 flex items-center justify-center rounded-2xl transition-all ${isProportionLocked ? 'bg-blue-50 text-google-blue border-2 border-blue-200' : 'bg-[#F1F3F4] text-gray-400 hover:bg-gray-200'}`}
+                                    title="Proportsiyani qulflash"
+                                >
+                                    {isProportionLocked ? <Link size={20} /> : <Unlink size={20} />}
+                                </button>
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-gray-700 ml-1">Balandlik (mm)</label>
                                     <input
                                         type="number"
                                         value={plateHeight || ''}
-                                        onChange={(e) => setPlateHeight(Number(e.target.value))}
+                                        onChange={(e) => {
+                                            const val = Number(e.target.value);
+                                            setPlateHeight(val);
+                                            if (isProportionLocked && val > 0) {
+                                                setPlateWidth(Math.round(val * (520 / 112)));
+                                            }
+                                        }}
                                         className="w-full h-14 px-4 bg-[#F1F3F4] rounded-2xl border-none focus:ring-2 focus:ring-google-blue outline-none text-lg transition-all"
                                         placeholder="112"
                                     />
@@ -288,7 +308,7 @@ function App() {
                             </div>
 
                             <div className="w-full flex items-center justify-center">
-                                <div 
+                                <div
                                     className="bg-white rounded-3xl p-4 md:p-8 shadow-2xl shadow-gray-200 border border-gray-100 flex items-center justify-center overflow-hidden w-full"
                                     style={{ aspectRatio: `${outW} / ${outH}` }}
                                 >
@@ -300,12 +320,12 @@ function App() {
                                     >
                                         {/* Outer black border */}
                                         <rect x="0" y="0" width={outW} height={outH} rx={outH * 0.134} fill="#000" />
-                                        
+
                                         {/* Inner white background */}
-                                        <rect x={strokeW} y={strokeW} width={outW - strokeW*2} height={outH - strokeW*2} rx={outH * 0.089} fill="#FFF" />
-                                        
+                                        <rect x={strokeW} y={strokeW} width={outW - strokeW * 2} height={outH - strokeW * 2} rx={outH * 0.089} fill="#FFF" />
+
                                         {/* Divider black line */}
-                                        <rect x={dividerX} y={strokeW} width={dividerW} height={outH - strokeW*2} fill="#000" />
+                                        <rect x={dividerX} y={strokeW} width={dividerW} height={outH - strokeW * 2} fill="#000" />
 
                                         {/* Region Code */}
                                         <text
