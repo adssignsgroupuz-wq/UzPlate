@@ -59,6 +59,8 @@ function App() {
 
             // Clone SVG so we don't modify the live preview
             const svgClone = svgRef.current.cloneNode(true)
+            svgClone.setAttribute('width', String(outWidth))
+            svgClone.setAttribute('height', String(outHeight))
 
             // Kenglik va balandlik endi dinamik hisoblangani uchun preserveAspectRatio o'chiramiz
             // svgClone.setAttribute('preserveAspectRatio', 'none')
@@ -82,7 +84,7 @@ function App() {
                     : euroFont
 
                 // Qayta hisoblangan dinamik shrift o'lchamlarini olish
-                const fontSizeAttr = textEl.getAttribute('fontSize') || (textEl.style && textEl.style.fontSize);
+                const fontSizeAttr = textEl.getAttribute('font-size') || textEl.getAttribute('fontSize') || (textEl.style && textEl.style.fontSize);
                 const cls = textEl.getAttribute('class') || '';
                 const sizeMatch = cls.match(/text-\[(\d+(?:\.\d+)?)px\]/);
                 let fontSize = parseFloat(fontSizeAttr);
@@ -121,11 +123,11 @@ function App() {
                 if (svgTextLength > 0 && naturalWidth > 0) {
                     const scaleX = svgTextLength / naturalWidth
                     const rawPath = font.getPath(text, 0, renderY, fontSize)
-                    pathEl.setAttribute('d', rawPath.toPathData(2))
+                    pathEl.setAttribute('d', rawPath.toPathData(5))
                     pathEl.setAttribute('transform', `translate(${startX - bbox.x1 * scaleX}, 0) scale(${scaleX}, 1)`)
                 } else {
                     const pathObj = font.getPath(text, startX, renderY, fontSize)
-                    pathEl.setAttribute('d', pathObj.toPathData(2))
+                    pathEl.setAttribute('d', pathObj.toPathData(5))
                 }
 
                 textEl.parentNode?.replaceChild(pathEl, textEl)
