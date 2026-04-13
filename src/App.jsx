@@ -42,7 +42,7 @@ function App() {
 
     const handleDownload = async () => {
         if (!svgRef.current || isDownloading) return
-        
+
         if (!fonts) {
             alert('Shriftlar hali yuklanmagan. Iltimos, bir soniya kuting.')
             return
@@ -59,7 +59,7 @@ function App() {
 
             // Clone SVG so we don't modify the live preview
             const svgClone = svgRef.current.cloneNode(true)
-            
+
             // Force the exported SVG to stretch and fill the custom dimensions perfectly
             svgClone.setAttribute('preserveAspectRatio', 'none')
 
@@ -261,60 +261,64 @@ function App() {
                             </div>
 
                             <div className="w-full flex items-center justify-center">
-                                <div className="bg-white rounded-3xl p-4 md:p-8 shadow-2xl shadow-gray-200 border border-gray-100 flex items-center justify-center overflow-hidden w-full aspect-[520/112]">
+                                <div 
+                                    className="bg-white rounded-3xl p-4 md:p-8 shadow-2xl shadow-gray-200 border border-gray-100 flex items-center justify-center overflow-hidden w-full"
+                                    style={{ aspectRatio: `${plateWidth > 0 ? plateWidth : 520} / ${plateHeight > 0 ? plateHeight : 112}` }}
+                                >
                                     <svg
                                         ref={svgRef}
                                         viewBox="0 0 52000 11200"
-                                        className="w-full h-auto drop-shadow-xl"
+                                        preserveAspectRatio="none"
+                                        className="w-full h-full drop-shadow-xl"
                                         xmlns="http://www.w3.org/2000/svg"
                                     >
-                                    {/* Background and Plate Structure */}
-                                    <path fill="#000" d="M1498.87 4.93l49000 0c825,0 1500,675 1500,1500l0 8199.99c0,825.01 -675,1500.01 -1500,1500.01l-49000 0c-825,0 -1500,-675 -1500,-1500.01l0 -8199.99c0,-825 675,-1500 1500,-1500z" />
-                                    <path fill="#FFF" d="M11748.86 504.93l38750.01 0c550,0 1000,450.03 1000,1000l0 8199.99c0,549.97 -450.03,1000 -1000,1000l-38750.01 0 0 -10199.99z" />
-                                    <path fill="#FFF" d="M1498.88 504.93l9749.98 0 0 10199.99 -9749.98 0c-549.97,0 -1000,-450 -1000,-1000l0 -8199.99c0,-550 450,-1000 1000,-1000z" />
+                                        {/* Background and Plate Structure */}
+                                        <path fill="#000" d="M1498.87 4.93l49000 0c825,0 1500,675 1500,1500l0 8199.99c0,825.01 -675,1500.01 -1500,1500.01l-49000 0c-825,0 -1500,-675 -1500,-1500.01l0 -8199.99c0,-825 675,-1500 1500,-1500z" />
+                                        <path fill="#FFF" d="M11748.86 504.93l38750.01 0c550,0 1000,450.03 1000,1000l0 8199.99c0,549.97 -450.03,1000 -1000,1000l-38750.01 0 0 -10199.99z" />
+                                        <path fill="#FFF" d="M1498.88 504.93l9749.98 0 0 10199.99 -9749.98 0c-549.97,0 -1000,-450 -1000,-1000l0 -8199.99c0,-550 450,-1000 1000,-1000z" />
 
-                                    {/* Region Code — dominantBaseline=central lets browser use real font metrics */}
-                                    <text
-                                        x="6373"
-                                        y="5604"
-                                        textAnchor="middle"
-                                        dominantBaseline="central"
-                                        className="text-[7055px] fill-black"
-                                        style={{ fontFamily: "'Euro Plate', monospace" }}
-                                    >
-                                        {region}
-                                    </text>
-
-                                    {/* Main Number — dominantBaseline=central for perfect vertical center */}
-                                    <text
-                                        x="28959"
-                                        y="5604"
-                                        textAnchor="middle"
-                                        dominantBaseline="central"
-                                        className="text-[8800px] fill-black"
-                                        style={{ fontFamily: "'Euro Plate', monospace" }}
-                                    >
-                                        {number}
-                                    </text>
-
-                                    {/* Flag and UZ - centered in right panel (46170-49670, center: 47920) */}
-                                    <g>
+                                        {/* Region Code — dominantBaseline=central lets browser use real font metrics */}
                                         <text
-                                            x="47920"
-                                            y="8600"
+                                            x="6373"
+                                            y="5604"
                                             textAnchor="middle"
-                                            fill="#00BAB3"
-                                            className="text-[2600px]"
-                                            style={{ fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}
-                                        >UZ</text>
-                                        <rect fill="#FEFEFE" x="46170" y="2333" width="3500" height="2500" />
-                                        <path fill="#ED162D" d="M46170 3133l3500 0 0 50 -3500 0 0 -50zm3500 850l0 50 -3500 0 0 -50 3500 0z" />
-                                        <polygon fill="#2F8738" points="46170,4033 49670,4033 49670,4833 46170,4833 " />
-                                        <polygon fill="#2F80F6" points="46170,2333 49670,2333 49670,3133 46170,3133 " />
-                                        <path fill="#FFF" d="M46870 2433c17,0 33,1 50,4 -141,23 -250,147 -250,295 0,148 108,272 250,295 -16,2 -32,4 -50,4 -165,0 -300,-134 -300,-300 0,-165 134,-300 300,-300z" />
-                                        <path fill="#FFF" d="M47530 2913l-13 41 -43 0 35 25 -13 41 35 -25 35 25 -13 -41 35 -25 -43 0 -13 -41zm-275-131l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm-240 0l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm960-480l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm-240-480l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm-240-480l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25z" />
-                                    </g>
-                                </svg>
+                                            dominantBaseline="central"
+                                            className="text-[7055px] fill-black"
+                                            style={{ fontFamily: "'Euro Plate', monospace" }}
+                                        >
+                                            {region}
+                                        </text>
+
+                                        {/* Main Number — dominantBaseline=central for perfect vertical center */}
+                                        <text
+                                            x="28959"
+                                            y="5604"
+                                            textAnchor="middle"
+                                            dominantBaseline="central"
+                                            className="text-[8800px] fill-black"
+                                            style={{ fontFamily: "'Euro Plate', monospace" }}
+                                        >
+                                            {number}
+                                        </text>
+
+                                        {/* Flag and UZ - centered in right panel (46170-49670, center: 47920) */}
+                                        <g>
+                                            <text
+                                                x="47920"
+                                                y="8600"
+                                                textAnchor="middle"
+                                                fill="#00BAB3"
+                                                className="text-[2600px]"
+                                                style={{ fontFamily: "Arial, Helvetica, sans-serif", fontWeight: "bold" }}
+                                            >UZ</text>
+                                            <rect fill="#FEFEFE" x="46170" y="2333" width="3500" height="2500" />
+                                            <path fill="#ED162D" d="M46170 3133l3500 0 0 50 -3500 0 0 -50zm3500 850l0 50 -3500 0 0 -50 3500 0z" />
+                                            <polygon fill="#2F8738" points="46170,4033 49670,4033 49670,4833 46170,4833 " />
+                                            <polygon fill="#2F80F6" points="46170,2333 49670,2333 49670,3133 46170,3133 " />
+                                            <path fill="#FFF" d="M46870 2433c17,0 33,1 50,4 -141,23 -250,147 -250,295 0,148 108,272 250,295 -16,2 -32,4 -50,4 -165,0 -300,-134 -300,-300 0,-165 134,-300 300,-300z" />
+                                            <path fill="#FFF" d="M47530 2913l-13 41 -43 0 35 25 -13 41 35 -25 35 25 -13 -41 35 -25 -43 0 -13 -41zm-275-131l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm-240 0l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm960-480l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm-240-480l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm-240-480l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25zm0 240l13-41 -35-25 43 0 13-41 13 41 43 0 -35 25 13 41 -35-25 -35 25z" />
+                                        </g>
+                                    </svg>
                                 </div>
                             </div>
 
