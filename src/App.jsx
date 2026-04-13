@@ -58,7 +58,6 @@ function App() {
             const outWidth = plateWidth > 0 ? plateWidth : 520
             const outHeight = plateHeight > 0 ? plateHeight : 112
 
-            // Clone SVG so we don't modify the live preview
             const svgClone = svgRef.current.cloneNode(true)
             svgClone.setAttribute('width', String(outWidth))
             svgClone.setAttribute('height', String(outHeight))
@@ -140,6 +139,41 @@ function App() {
                 format: [outWidth, outHeight]
             })
 
+            // PDFni haqiqiy CMYK rang muhitida eksport qilish uchun RGB-to-CMYK Interceptor tizimi
+            const toCMYK = (r, g, b) => {
+                if (r === 0 && g === 0 && b === 0) return ['0.00', '0.00', '0.00', '1.00']; // Pure Black
+                if (r === 255 && g === 255 && b === 255) return ['0.00', '0.00', '0.00', '0.00']; // Pure White
+                
+                const rN = r / 255, gN = g / 255, bN = b / 255;
+                const k = 1 - Math.max(rN, gN, bN);
+                if (k === 1) return ['0.00', '0.00', '0.00', '1.00'];
+                return [
+                    ((1 - rN - k) / (1 - k)).toFixed(2),
+                    ((1 - gN - k) / (1 - k)).toFixed(2),
+                    ((1 - bN - k) / (1 - k)).toFixed(2),
+                    k.toFixed(2)
+                ];
+            };
+
+            ['setFillColor', 'setTextColor', 'setDrawColor'].forEach(method => {
+                const original = doc[method].bind(doc);
+                doc[method] = function (...args) {
+                    if (args.length >= 3 && typeof args[0] === 'number') {
+                        const [c, m, y, k] = toCMYK(args[0], args[1], args[2]);
+                        return original(c, m, y, k);
+                    } else if (args.length === 1 && typeof args[0] === 'string' && args[0].startsWith('#')) {
+                        let hex = args[0].replace('#', '');
+                        if (hex.length === 3) hex = hex.split('').map(x => x + x).join('');
+                        const r = parseInt(hex.substring(0, 2), 16);
+                        const g = parseInt(hex.substring(2, 4), 16);
+                        const b = parseInt(hex.substring(4, 6), 16);
+                        const [c, m, y, k] = toCMYK(r, g, b);
+                        return original(c, m, y, k);
+                    }
+                    return original(...args);
+                };
+            });
+
             // Fix: usage of svg2pdf.js v2
             await svg2pdf(svgClone, doc, {
                 x: 0,
@@ -148,7 +182,7 @@ function App() {
                 height: outHeight
             })
 
-            doc.save(`avtoraqam_${region}_${number.replace(/\s/g, '_')}_${outWidth}x${outHeight}mm.pdf`)
+            doc.save(`${outWidth}x${outHeight}mm.pdf`)
         } catch (error) {
             console.error('Download error:', error)
             alert('Xatolik yuz berdi: ' + error.message)
